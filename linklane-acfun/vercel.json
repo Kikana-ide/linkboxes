@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "functions": {
+    "api/parse.js": { "maxDuration": 20 },
+    "api/download.js": { "maxDuration": 300 }
+  },
+  "rewrites": [
+    { "source": "/acfun", "destination": "/acfun/index.html" },
+    { "source": "/acfun/", "destination": "/acfun/index.html" }
+  ]
+}

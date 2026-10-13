@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d1018">
+  <meta name="description" content="Linkbox — 简单、快速、好用的在线工具入口。">
+  <title>Linkbox — 你的轻量工具入口</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/style.css">
+  <script src="/assets/app.js" defer></script>
+</head>
+<body data-page="home">
+  <div class="ambient ambient--one" aria-hidden="true"></div>
+  <div class="ambient ambient--two" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="container nav-row">
+      <a class="brand" href="/" aria-label="Linkbox 首页">
+        <span class="brand-mark"><span class="brand-dot"></span><span class="brand-dot"></span><span class="brand-dot"></span><span class="brand-dot"></span></span>
+        <span class="brand-name">linkbox<span class="brand-period">.</span></span>
+        <span class="brand-tag">TOOLS</span>
+      </a>
+      <nav class="nav-links" aria-label="主导航">
+        <a class="nav-link active" href="/">首页</a>
+        <a class="nav-link" href="#tools">全部工具</a>
+        <a class="nav-link" href="#about">关于</a>
+      </nav>
+      <a class="nav-cta" href="/acfun/">进入解析工具 <svg class="icon"><use href="/assets/icons.svg#arrow-right"/></svg></a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero container" aria-labelledby="hero-title">
+      <div class="hero-main">
+        <div class="eyebrow"><span class="pulse-dot"></span> YOUR LITTLE CORNER OF THE INTERNET <span class="eyebrow-line"></span> 01 / 01</div>
+        <h1 id="hero-title">好用的工具，<br><span class="gradient-text">不该藏得太深。</span></h1>
+        <p class="hero-copy">一个干净、直接的在线工具起点。<br>少一点步骤，多一点效率。收藏这里，下次直接开始。</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#tools">探索工具 <svg class="icon"><use href="/assets/icons.svg#arrow-right"/></svg></a>
+          <span class="hero-hint"><span class="hint-orbit"></span> 无需注册 · 打开即用</span>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="art-grid"></div>
+        <div class="art-halo art-halo-one"></div>
+        <div class="art-halo art-halo-two"></div>
+        <div class="art-illustration">
+          <div class="art-window-top"><span></span><span></span><span></span><i></i></div>
+          <div class="art-window-body"><div class="art-surface">↗</div><div class="art-text"><i></i><i></i></div><div class="art-code"><span>ac</span>解析 <b>→</b></div></div>
+        </div>
+        <div class="art-badge art-badge-one"><svg class="icon"><use href="/assets/icons.svg#bolt"/></svg> One click away</div>
+        <div class="art-badge art-badge-two"><span>✳</span> built for you</div>
+      </div>
+    </section>
+
+    <section class="tools-section container" id="tools" aria-labelledby="tools-heading">
+      <div class="section-head">
+        <div><div class="section-kicker">THE TOOLBOX <span>/ 工具箱</span></div><h2 id="tools-heading">从这里开始<span class="heading-star"> ✳</span></h2></div>
+        <div class="search-wrap"><svg class="icon"><use href="/assets/icons.svg#search"/></svg><input id="tool-search" type="search" aria-label="搜索工具" placeholder="搜索工具..." autocomplete="off"><kbd>/</kbd></div>
+      </div>
+      <div class="filter-row"><button class="filter-chip is-active" data-filter="all" type="button">全部 <span>04</span></button><button class="filter-chip" data-filter="video" type="button">视频工具</button><button class="filter-chip" data-filter="other" type="button">更多工具</button><div class="filter-line"></div><span class="filter-meta">持续添加新工具中 <span class="tiny-spark">✦</span></span></div>
+      <div class="tool-grid" id="tool-grid">
+        <a href="/acfun/" class="tool-card tool-card-featured" data-category="video" data-search="acfun 解析 视频 下载 m3u8 ac站 a站">
+          <div class="tool-card-top"><span class="tool-number">01 / VIDEO</span><span class="status-pill"><span></span> AVAILABLE</span></div>
+          <div class="tool-icon tool-icon-ac"><strong>Ac</strong><span>✳</span></div>
+          <div class="tool-card-main"><div class="tool-card-title-row"><h3>AcFun 解析</h3><span class="card-go"><svg class="icon"><use href="/assets/icons.svg#arrow-right"/></svg></span></div><p>粘贴 A 站视频链接，查看视频信息、可用画质并下载 MP4。</p></div>
+          <div class="tool-card-bottom"><span class="tech-pill">AC 视频</span><span class="tech-pill">多画质</span><span class="tech-pill">MP4</span></div>
+        </a>
+        <article class="tool-card tool-card-soon" data-category="other" data-search="文本格式化 json 格式化"><div class="tool-card-top"><span class="tool-number">02 / TEXT</span><span class="soon-pill">即将上线</span></div><div class="tool-icon tool-icon-text"><span>{ }</span></div><div class="tool-card-main"><div class="tool-card-title-row"><h3>文本格式化</h3><span class="card-muted-arrow">↗</span></div><p>整理零散文本，把复杂内容变得清晰易读。</p></div><div class="tool-card-bottom"><span class="tech-pill">COMING SOON</span></div></article>
+        <article class="tool-card tool-card-soon" data-category="other" data-search="文件转换 图片 格式 pdf"><div class="tool-card-top"><span class="tool-number">03 / FILE</span><span class="soon-pill">即将上线</span></div><div class="tool-icon tool-icon-file"><svg class="icon"><use href="/assets/icons.svg#layers"/></svg></div><div class="tool-card-main"><div class="tool-card-title-row"><h3>格式转换</h3><span class="card-muted-arrow">↗</span></div><p>让常见文件格式在不同场景下自由转换。</p></div><div class="tool-card-bottom"><span class="tech-pill">COMING SOON</span></div></article>
+        <article class="tool-card tool-card-soon" data-category="other" data-search="快捷收藏 书签 链接"><div class="tool-card-top"><span class="tool-number">04 / LINK</span><span class="soon-pill">即将上线</span></div><div class="tool-icon tool-icon-link"><svg class="icon"><use href="/assets/icons.svg#link"/></svg></div><div class="tool-card-main"><div class="tool-card-title-row"><h3>快捷收藏</h3><span class="card-muted-arrow">↗</span></div><p>把常用链接整理到一起，随时快速打开。</p></div><div class="tool-card-bottom"><span class="tech-pill">COMING SOON</span></div></article>
+      </div>
+      <div class="empty-search" id="empty-search" hidden><svg class="icon"><use href="/assets/icons.svg#search"/></svg><p>没有找到匹配的工具</p><span>换个关键词试试吧</span></div>
+    </section>
+
+    <section class="about-section container" id="about"><div class="about-stripe"><div class="about-icon"><svg class="icon"><use href="/assets/icons.svg#spark"/></svg></div><div><h3>简单一点，好用一点。</h3><p>Linkbox 目前只开放 AcFun 解析，更多轻量工具会陆续加入。</p></div><a href="/acfun/">先试试看 <svg class="icon"><use href="/assets/icons.svg#arrow-right"/></svg></a></div></section>
+  </main>
+  <footer class="site-footer container"><span>© <span data-year></span> Linkbox. Made for the little things.</span><span>Less noise, more doing <b>✳</b></span></footer>
+</body>
+</html>
