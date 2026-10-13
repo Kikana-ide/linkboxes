@@ -1,6 +1,6 @@
 # Linkbox · AcFun 视频解析
 
-一个适合部署在 **Vercel** 的小型中文工具导航站。主页提供 AcFun 解析入口；视频页可以输入 AcFun 公公开视频网址、查看封面/UP 主/时长、选择视频清晰度、在浏览器里尝试 HLS 预览，使用服务器 FFmpeg 实时封装 MP4 下载。
+一个适合部署在 **Vercel** 的小型中文工具导航站。主页提供 AcFun 解析入口；视频页可以输入 AcFun 公公开视频网址、查看封面/UP 主/时长、选择视频清晰度、在浏览器里尝试 HLS 预览，使用服务器 FFmpeg 转换、核验完整时长后再下载 MP4（v1.0.1）。
 
 > **注意**：这个站点不要求用户提供 Cookie，不支持绕过登录、付费、DRM 等权限。不建议用来下载没有权利保存或再次传播的视频。
 
@@ -12,7 +12,8 @@ acfun/index.html      AcFun 解析页面
 assets/style.css      全部 UI 样式（响应式）
 assets/app.js         首页搜索、视频解析及下载前端逻辑
 api/parse.js          后端解析接口 POST /api/parse
-api/download.js       后端 MP4 实时封装 GET /api/download
+api/download.js       后端 MP4 完整转换+验证 GET /api/download
+lib/download-check.js  视频时长/大小校验及错误分类
 lib/acfun.js          视频页面与 HLS 码流解析
 lib/rate-limit.js     简易限流（单实例）
 vercel.json           Vercel 部署配置
@@ -73,7 +74,7 @@ vercel.json           Vercel 部署配置
 
 ### `GET /api/download?video=ac35457073&quality=0`
 
-实时输出 MP4 流。服务端不保存完整文件，不会绕过视频权限。这个接口会重新请求 AcFun 页面，耗费平台和 Vercel 资源。
+服务器先把视频转换到临时文件，核对大小与时长后才输出 MP4；若源站只返回短片段，将返回明确的 JSON 错误（HTTP 502），不再输出坏 MP4。临时文件仅存在于函数的 `/tmp` 中并在响应结束后删除。函数会重新请求 AcFun 视频页，耗费平台和 Vercel 资源。
 
 ## 已知限制与上线提示
 
@@ -81,6 +82,7 @@ vercel.json           Vercel 部署配置
 - 浏览器 HLS 预览依赖 AcFun CDN 的跨域许可。失败时可点击「在 AcFun 查看」。
 - 某些 HLS 视频编码/音频封装无法用 `-c copy` 直接得到兼容 MP4，需要另一种转换策略。
 - `ffmpeg-static` 将较大的可执行文件打包进 Vercel Function；请部署后先测试短公开视频，并观察部署日志与用量。
+- 浏览器端支持 Chrome/Edge 的保存到磁盘 API；其他浏览器用 Blob 回退，特别大的视频会额外占用浏览器内存。
 - 当前内存限流不是跨实例共享。面向公众正式开放前，建议接入 Upstash Redis 限流、验证码、流量阈值和滥用监控。
 - 不要把其他站点任意 URL 作为后端抓取地址；目前 API 只允许 AcFun 视频页。
 - 本示例未包含账号、数据存储或付费功能，也未进行真实 AcFun 线上端到端测试。
@@ -92,3 +94,15 @@ vercel.json           Vercel 部署配置
 ### 部署自检
 
 部署后打开 `/api/health`，若返回 `{"status":"ok","ffmpegAvailable":true}`，说明服务端能找到 FFmpeg 文件。注意：文件存在不代表第三方 CDN 必然能够连接，也不代表所有视频可转换。
+
+## 2026-10-14 下载缺陷修复（v1.0.1）
+
+复现样本 `ac48742734` 原下载文件只有 2,022 字节，视频流约 0.043 秒（原视频约 398 秒）。此前服务端在 FFmpeg 开始运行时立刻回 `200 video/mp4`，即使 HLS 提前结束也会把截断文件下载下来。
+
+本次修改：
+- 先转换到服务器临时 MP4，FFmpeg 退出码、输出文件大小和实际时长必须通过校验，才返回下载响应；错误返回 502 JSON。
+- 遇到源站 403/404/超时显示对应的简短提示。
+- 网站下载按钮改为 fetch 接收反馈，显示进度/错误，Chrome/Edge 优先直接保存到磁盘。
+- 新增与复现文件对应的自动化单元测试。
+
+**重要限制：** 本修复保证不会把明显不完整的文件误报为下载成功，**不代表**已修复 AcFun CDN 或 Vercel 环境导致的 HLS 提前结束。要定位源头需要在新版本部署后查看 Vercel → Logs → `api/download` 运行记录（以 `[Linkbox AcFun download failure]` 开头，不记录带签名参数的 CDN URL）。Vercel Hobby 函数时限通常最多 300 秒，且临时存储空间和数据传输都有实际限制。若连续失败，稳定的 MP4 下载需要改由具备持久后台任务能力的下载服务（例如独立服务器）负责，Vercel 保留网页和解析接口。

@@ -1,12 +1,12 @@
 {
   "name": "linklane-acfun",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "A minimal Chinese tools portal with an AcFun public-video parser",
   "scripts": {
     "dev": "vercel dev",
     "test": "node --test tests/*.test.js",
-    "check": "node --check api/parse.js && node --check api/download.js && node --check lib/acfun.js && node --check assets/app.js"
+    "check": "node --check api/parse.js && node --check api/download.js && node --check lib/download-check.js && node --check lib/acfun.js && node --check assets/app.js"
   },
   "dependencies": {
     "ffmpeg-static": "^5.2.0"

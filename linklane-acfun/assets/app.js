@@ -45,6 +45,8 @@
     const empty = document.getElementById('empty-panel');
     const qualityGrid = document.getElementById('quality-grid');
     const download = document.getElementById('download-button');
+    const downloadStatus = document.getElementById('download-status');
+    let downloading = false;
     const preview = document.getElementById('preview-button');
     const modal = document.getElementById('preview-modal');
     const player = document.getElementById('video-player');
@@ -74,14 +76,19 @@
       return value && value > 0 ? `${(value / 1000).toFixed(0)} kbps` : '可用视频流';
     }
     function currentStream() { return current?.streams[selected]; }
+    function setDownloadStatus(message, type = 'loading') {
+      downloadStatus.textContent = message;
+      downloadStatus.hidden = !message;
+      downloadStatus.className = 'download-status' + (type === 'error' ? ' is-error' : type === 'success' ? ' is-success' : '');
+    }
 
     function updateDownload() {
       const stream = currentStream();
       if (!stream) return;
       const tooLong = current.duration != null && current.duration > 1800;
       download.href = `/api/download?video=${encodeURIComponent(current.id)}&quality=${stream.index}`;
-      download.setAttribute('aria-disabled', tooLong ? 'true' : 'false');
-      download.classList.toggle('is-disabled', tooLong);
+      download.setAttribute('aria-disabled', tooLong || downloading ? 'true' : 'false');
+      download.classList.toggle('is-disabled', tooLong || downloading);
       download.title = tooLong ? '本版本仅支持下载 30 分钟以内的视频' : '将视频实时转换为 MP4';
       preview.disabled = !stream;
     }
@@ -97,6 +104,7 @@
     function renderVideo(video) {
       current = video;
       selected = 0;
+      setDownloadStatus('');
       document.getElementById('video-title').textContent = video.title;
       document.getElementById('video-uploader').textContent = `UP 主 · ${video.uploader}`;
       document.getElementById('video-duration').innerHTML = '<svg class="icon"><use href="/assets/icons.svg#clock"/></svg>';
@@ -173,10 +181,87 @@
       }
     });
 
-    download.addEventListener('click', (event) => {
-      if (!current || (current.duration != null && current.duration > 1800)) {
-        event.preventDefault();
-        setStatus('当前版本仅支持 30 分钟以内的视频 MP4 下载。较长视频可使用本地 yt-dlp 工具。');
+    download.addEventListener('click', async (event) => {
+      event.preventDefault();
+      if (downloading || !current) return;
+      if (current.duration != null && current.duration > 1800) {
+        setDownloadStatus('此版本仅支持 30 分钟以内的视频。较长视频可用本地 yt-dlp。', 'error');
+        return;
+      }
+      const video = current;
+      const stream = currentStream();
+      if (!stream) return;
+      const name = `${video.id}-${stream.label.replace(/[^a-z0-9-]/gi, '') || 'video'}.mp4`;
+      let fileHandle = null;
+      // Must call showSaveFilePicker synchronously from the user's click.
+      // This prevents having to keep a large Blob in Chrome's memory.
+      if (typeof window.showSaveFilePicker === 'function') {
+        try {
+          fileHandle = await window.showSaveFilePicker({
+            suggestedName: name,
+            types: [{ description: 'MP4 视频', accept: { 'video/mp4': ['.mp4'] } }]
+          });
+        } catch (error) {
+          if (error?.name === 'AbortError') return;
+          fileHandle = null; // Unsupported permission: fall back to browser download.
+        }
+      }
+
+      downloading = true;
+      updateDownload();
+      setDownloadStatus('正在准备 MP4：服务器会先完整转换并验证视频，可能需要几十秒…');
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 290_000);
+      let writer = null;
+      try {
+        const url = `/api/download?video=${encodeURIComponent(video.id)}&quality=${stream.index}`;
+        const response = await fetch(url, { signal: controller.signal, cache: 'no-store' });
+        if (!response.ok || !response.headers.get('content-type')?.includes('video/mp4')) {
+          let message = `下载失败（HTTP ${response.status}）`;
+          try { message = (await response.json()).error || message; } catch (_) { /* HTML/server error */ }
+          throw new Error(message);
+        }
+        const total = Number(response.headers.get('content-length')) || 0;
+        const reader = response.body?.getReader();
+        if (!reader) throw new Error('浏览器无法读取下载流，请更换最新版浏览器。');
+        if (fileHandle) writer = await fileHandle.createWritable();
+        const chunks = [];
+        let received = 0;
+        let previous = 0;
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          received += value.byteLength;
+          if (writer) await writer.write(value);
+          else chunks.push(value);
+          // Avoid re-rendering on every small network chunk.
+          if (received - previous > 512 * 1024 || (total && received === total)) {
+            previous = received;
+            const pct = total ? ` / ${(total / 1048576).toFixed(1)} MB (${Math.floor(received / total * 100)}%)` : '';
+            setDownloadStatus(`正在接收文件：${(received / 1048576).toFixed(1)} MB${pct}`);
+          }
+        }
+        if (total && received !== total) throw new Error('视频传输中断，文件大小与服务器标记不一致。');
+        if (writer) {
+          await writer.close(); writer = null;
+        } else {
+          const fileUrl = URL.createObjectURL(new Blob(chunks, { type: 'video/mp4' }));
+          const link = document.createElement('a');
+          link.href = fileUrl;
+          link.download = name;
+          document.body.append(link);
+          link.click();
+          link.remove();
+          setTimeout(() => URL.revokeObjectURL(fileUrl), 30_000);
+        }
+        setDownloadStatus('MP4 完整下载成功！', 'success');
+      } catch (error) {
+        if (writer) await writer.abort().catch(() => {});
+        setDownloadStatus(error.name === 'AbortError' ? '下载超时，请查看服务器日志或稍后重试。' : (error.message || '下载失败。'), 'error');
+      } finally {
+        clearTimeout(timeout);
+        downloading = false;
+        updateDownload();
       }
     });
 
