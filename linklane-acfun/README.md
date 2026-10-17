@@ -1,4 +1,19 @@
-# Linkbox · AcFun 视频解析
+# Linkbox · 日常工具与日语练习
+
+## 2026-10-17 首页与日语学习更新（v1.1.0）
+
+- 首页使用奶油白背景、浅绿标题卡、浅黄插画卡与四入口胶囊导航。主视觉来自用户上传的原图，使用 CSS 自适应裁切；图片文件为 `assets/hero-illustration.jpg`。布局参考用户提供的页面截图，保留 Linkbox 名称；没有平台下载图标区。
+- `/acfun/` 保留原页面、样式、交互与所有 API/lib 文件。
+- 新增 `/japanese/`：N5–N1 每级 24 道原创选择题，共 120 题；每级词汇、语法、阅读各 8 题。不含听力，不是官方真题或完整官方模拟考试。
+- 练习支持 30 分钟计时、题号跳转、进度本机保存与恢复、交卷前未答提醒、自动评分、分项结果、全部解析、错题筛选、重做及最近 5 次记录。关闭网页期间仍计时；交卷后可以复习本次解析，刷新后保留简要历史而不保留整份答卷。浏览器禁用存储时仍可作答，但不能恢复进度。
+- 得分按每题等权计算正确率并四舍五入到百分制，未答按错题计算；不等于 JLPT 官方量尺分，也不预测是否合格。题目及中文解析均为本站原创；JLPT 名称归相应权利人，本项目与官方无关联。
+- 原画作为用户指定素材保留，权利归原作者；本项目不主张画作权利。
+
+新增文件：`assets/portal.css`、`assets/hero-illustration.jpg`、`assets/japanese-questions.js`、`assets/japanese.js`、`japanese/index.html`、`tests/japanese.test.js`。修改：首页 `index.html`、`package.json`、本说明与日语静态路由 `vercel.json`。
+
+**现有仓库部署设置：** GitHub 仓库为 `Kikana-ide/linkboxes`，Vercel 项目为 `linkboxes`，Root Directory 必须为 **`linklane-acfun`**。Framework Preset 选 `Other`，Build Command 和 Output Directory 沿用空值，由 Vercel 安装现有 `ffmpeg-static` 依赖。保留 `/api/parse` 的 20 秒和 `/api/download` 的 300 秒配置；新路由仅匹配 `/japanese` 与 `/japanese/`，不覆盖 `/api/*`。
+
+更新部署时，推送仓库生产分支 `main` 即可触发已有 Git 集成。检查 `/`、`/japanese`、`/japanese/`、`/acfun/`、`/api/health`；再测试一个此前可下载的 AcFun 短视频。未更改源站连接或视频转换逻辑，因此原有 CDN、转换时间与 Vercel 资源限制仍然适用。
 
 一个适合部署在 **Vercel** 的小型中文工具导航站。主页提供 AcFun 解析入口；视频页可以输入 AcFun 公公开视频网址、查看封面/UP 主/时长、选择视频清晰度、在浏览器里尝试 HLS 预览，使用服务器 FFmpeg 转换、核验完整时长后再下载 MP4（v1.0.1）。
 
@@ -9,8 +24,12 @@
 ```
 index.html            首页 / 工具导航
 acfun/index.html      AcFun 解析页面
-assets/style.css      全部 UI 样式（响应式）
-assets/app.js         首页搜索、视频解析及下载前端逻辑
+japanese/index.html   日语分级练习页面
+assets/portal.css     新首页与日语页响应式样式
+assets/japanese.js    答题、保存进度、计时与评分
+assets/japanese-questions.js  五级原创题库
+assets/style.css      原 AcFun 页面样式（响应式）
+assets/app.js         原视频解析及下载前端逻辑
 api/parse.js          后端解析接口 POST /api/parse
 api/download.js       后端 MP4 完整转换+验证 GET /api/download
 lib/download-check.js  视频时长/大小校验及错误分类
@@ -23,8 +42,8 @@ vercel.json           Vercel 部署配置
 
 1. 解压这个项目，把**整个文件夹的内容**上传到 GitHub 新建仓库（例如 `linkbox-acfun`）。
 2. 打开 [Vercel](https://vercel.com/new)，使用 GitHub 登录，选择 **Add New → Project / Import Git Repository**，选中你的仓库。
-3. **Framework Preset** 选择 `Other`；**Build Command** 留空；**Output Directory** 不填。根目录是仓库根目录。
-4. 点击 **Deploy**。部署完成后网站首页为 `/`，AcFun 解析页为 `/acfun/`。
+3. **Framework Preset** 选择 `Other`；**Build Command** 留空；**Output Directory** 不填。本仓库的 **Root Directory** 为 `linklane-acfun`；仅在把子目录内容单独上传成新仓库时才用仓库根目录。
+4. 点击 **Deploy**。部署完成后网站首页为 `/`，AcFun 解析页为 `/acfun/`，日语学习页为 `/japanese/`。
 5. 更新代码时只需向 GitHub 推送，Vercel 会自动重新部署。
 
 项目依赖 `ffmpeg-static`，安装时会下载适用于部署环境的 FFmpeg。Vercel Node.js Functions 支持流式输出，但转换大视频受**函数运行时长（Hobby 通常最多 300 秒，需启用 Fluid Compute）**、出口流量以及 AcFun CDN 访问限制影响。项目对已知时长超过 30 分钟的视频不提供 MP4 服务端下载。下载超时、CDN 限制、缓存失效时可能失败；成功下载不作保证。

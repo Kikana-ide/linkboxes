@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#faf9f3">
+  <meta name="description" content="N5 至 N1 原创 JLPT 风格日语练习，含词汇、语法、阅读、计时答题和中文答案解析。非官方真题。">
+  <title>日语学习 · N1–N5 原创练习 — Linkbox</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/portal.css">
+  <script src="/assets/japanese-questions.js" defer></script>
+  <script src="/assets/japanese.js" defer></script>
+</head>
+<body class="portal-study">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <header class="portal-header portal-width">
+    <a class="portal-brand" href="/" aria-label="Linkbox 首页"><span class="brand-flower" aria-hidden="true">✳</span>linkbox<span class="brand-point">.</span></a>
+    <nav class="portal-nav" aria-label="工具导航">
+      <a class="nav-tool" href="/acfun/"><span class="nav-index">01</span>AcFun 解析</a>
+      <a class="nav-tool nav-featured" href="/japanese/" aria-current="page"><span class="nav-index">02</span>日语学习</a>
+      <button class="nav-tool nav-pending" type="button" disabled aria-label="入口 3 待定，即将上线"><span class="nav-index">03</span>待定<span class="coming-dot" aria-hidden="true"></span></button>
+      <button class="nav-tool nav-pending" type="button" disabled aria-label="入口 4 待定，即将上线"><span class="nav-index">04</span>待定<span class="coming-dot" aria-hidden="true"></span></button>
+    </nav>
+    <a class="portal-repo" href="/">回到首页 <span aria-hidden="true">↗</span></a>
+  </header>
+  <main class="portal-width study-main" id="main">
+    <div class="study-breadcrumb"><a href="/">首页</a><span aria-hidden="true">/</span><span>日语学习</span></div>
+    <section class="study-intro">
+      <div><div class="study-kicker">A LITTLE JAPANESE, EVERY DAY</div><h1>每天一点，<span>离日语更近一点。</span></h1><p>从 N5 到 N1，把每一道练习，变成一次小小的进步。</p></div>
+      <div class="study-seal" aria-hidden="true"><span lang="ja">にほんご</span><strong>あ</strong><span>LET'S LEARN</span></div>
+    </section>
+    <p class="original-notice"><span aria-hidden="true">✳</span><span><strong>原创练习 · 非官方真题</strong>　JLPT 风格词汇、语法与阅读短卷，不含听力，并非完整官方模拟考试。得分为本卷原始正确率，不代表 JLPT 官方量尺分或合格判断。</span></p>
+    <noscript><p class="original-notice">请启用 JavaScript 后使用选题、答题和评分功能。</p></noscript>
+    <section id="setup-panel" class="study-setup" aria-labelledby="choose-title">
+      <div class="study-panel level-panel"><div class="section-topline"><span>01 / CHOOSE YOUR LEVEL</span><span aria-hidden="true">↙</span></div><h2 id="choose-title">选一个适合你的起点</h2><p class="panel-copy">N5 是入门，N1 是进阶。每级一套，随时开始。</p><div id="level-list" class="level-list" aria-label="选择练习等级"></div><p class="level-hint">每卷 24 题　/　词汇 8 题 · 语法 8 题 · 阅读 8 题</p></div>
+      <aside class="paper-preview study-panel"><div class="section-topline"><span>YOUR LITTLE CHALLENGE</span><span aria-hidden="true">✿</span></div><h2>今天，也学一点。</h2><p id="paper-description">正在准备原创练习…</p><div id="paper-meta" class="paper-meta"></div><ul class="practice-features"><li>逐题作答，随时切换</li><li>本机自动保存答题进度</li><li>交卷后查看中文逐题解析</li></ul><button id="start-practice" class="portal-button" type="button" disabled>开始练习 <span aria-hidden="true">→</span></button><p class="local-note">学习记录保存在当前浏览器，无需账号。</p></aside>
+      <div id="practice-history" class="practice-history"></div>
+    </section>
+    <section id="exam-panel" class="exam-layout" aria-label="日语练习答题" hidden>
+      <aside class="exam-sidebar study-panel"><div class="section-topline"><span>IN PRACTICE</span><span aria-hidden="true">✳</span></div><h2 id="exam-level"></h2><p id="exam-progress"></p><div class="timer-line"><span>剩余时间</span><strong id="exam-timer" role="timer" aria-label="剩余答题时间">30:00</strong></div><div id="question-map" class="question-map" aria-label="题号导航"></div><div class="map-legend"><span><i class="legend-done"></i>已答</span><span><i></i>未答</span></div><button id="submit-paper" type="button" class="portal-button">交卷并查看解析 <span aria-hidden="true">↗</span></button><p class="local-note">进度自动保存。超时将自动交卷。</p></aside>
+      <div class="question-panel study-panel"><div class="section-topline"><span id="question-section"></span><span id="question-number"></span></div><div id="question-passage" class="reading-passage" lang="ja" hidden></div><h2 id="question-prompt" class="question-prompt" lang="ja" tabindex="-1"></h2><fieldset class="answer-fieldset"><legend class="sr-only">选择一个答案</legend><div id="answer-options" class="answer-options" lang="ja"></div></fieldset><div class="question-actions"><button id="previous-question" class="portal-button button-outline" type="button">← 上一题</button><button id="next-question" class="portal-button" type="button">下一题 →</button></div><p id="exam-feedback" class="exam-feedback" role="status" aria-live="polite"></p></div>
+    </section>
+    <section id="results-panel" class="results-panel" tabindex="-1" aria-labelledby="results-title" hidden>
+      <div class="result-banner study-panel"><div><div class="study-kicker">LITTLE STEPS COUNT</div><h2 id="results-title">又向前走了一小步。</h2><p id="result-summary"></p><p class="score-disclaimer">原始正确率 · 非 JLPT 官方量尺分</p></div><div class="score-circle"><strong id="result-score"></strong><span>本卷得分 / 100</span></div></div>
+      <div id="section-scores" class="section-scores"></div>
+      <div class="results-actions"><button id="retry-paper" class="portal-button" type="button">再练一次 ↗</button><button id="choose-level" class="portal-button button-outline" type="button">选择其他等级</button></div>
+      <div class="review-heading"><h2>把答案，慢慢弄懂。</h2><label for="review-filter">查看 <select id="review-filter"><option value="all">全部题目</option><option value="wrong">错题与未答</option></select></label></div>
+      <div id="answer-review" class="answer-review"></div>
+    </section>
+    <dialog id="finish-dialog" class="finish-dialog" aria-labelledby="finish-title"><div class="study-kicker">READY TO FINISH?</div><h2 id="finish-title">交卷前，确认一下。</h2><p id="finish-copy"></p><div class="dialog-actions"><button id="continue-exam" class="portal-button button-outline" type="button">继续答题</button><button id="confirm-submit" class="portal-button" type="button">确认交卷</button></div></dialog>
+  </main>
+  <footer class="portal-footer portal-width"><span>Linkbox · 每天一点点</span><span>本页内容为原创练习，与 JLPT 官方无关联。</span></footer>
+</body>
+</html>
